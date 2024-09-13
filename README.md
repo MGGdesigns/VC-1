@@ -1,4 +1,4 @@
-# Visión por Computador: Práctica 1
+# Visión por Computador: Práctica 1. Primeros Pasos con OpenCV
 
 ## Introducción
 Esta primera práctica tiene como objetivo, famialiarizarse con las herramientas de desarrollo [Anaconda](https://www.anaconda.com/), el manjedor de paquetes que se empleará para realizar las instalaciones de los paquetes necesarios durante el deasrrollo de las sesiones prácticas de la asignatura. Además de comprender y saber hacer operaciones básicas de tratamiento de imágenes, como acceder a los valores de un píxel en concreto, crear una imagen, dibujar primitivas gráficas sobre una imagen, abrir una imagen de disco, acceder a los fotogramas de un vídeo, entre otros. Para esto, se dispone de una serie de tareas, que se comentan más abajo.
@@ -37,7 +37,7 @@ Se elige la Tarea 2, como víctima para utilizar las funciones de dibujo de Open
 
 Cambiar el valor de toda la imagen a 255 en el canal X, donde X está comprendido entre 0 y 2.
 
-Una vez hecho esto, se emplean las funciones *cv2.rectangle(img, p1, p2, color, thickness)* y *cv2.line(img, p1, p2, color, thickness)*, que sirven para dibujar rectángulos y líneas como sus nombres indican. Estas funciones reciven como parámetros: una imagen, un punto inicial (x1, y1), un punto final (x2, y2), un escalr que representa el color RGB, y un entero que supone el grosor del borde de cada figura, a continuación se muestran ejemplos:
+Una vez hecho esto, se emplean las funciones *cv2.rectangle(img, p1, p2, color, thickness)* y *cv2.line(img, p1, p2, color, thickness)*, que sirven para dibujar rectángulos y líneas como sus nombres indican. Estas funciones reciven como parámetros: una imagen, un punto inicial (x1, y1), un punto final (x2, y2), un escalar que representa el color BGR, y un entero que supone el grosor del borde de cada figura, a continuación se muestran ejemplos:
 
 ```cv2.rectangle(color_img,(50,0),(90,50),(255,0,0),-1)```
 ```cv2.line(color_img,(50,0),(50,alto),(0,0,0),3)```
@@ -57,6 +57,7 @@ Destacar que como se utiliza la librería cv2, para trabajar con el vídeo capta
 En cuanto al tema de invertir los colores, la operación a realizar se deduce de las imágenes en escala de grises. Si en una de estas imágenes, donde 255 representa el blanco y 0 el negro, se invirtiese el color. El valor 255 pasaría a representar el negro y el 0 al blanco. Por tanto, se puede deducir que si al valor máximo posible se le resta el valor que se quiere invertir se obtendrá el color inverso, abajo se relata un ejemplo
 
 Se quiere invertir el color X en dos casos:
+
 Caso 1:
 - X = 255
   - X = 255 - 255 --> X = 0
@@ -76,8 +77,102 @@ Ahora simplemente queda concatenar los canales, tal y como se hace en el código
 
 ### Tarea 5: Pintar círculos en las posiciones del píxel más claro y más oscuro ¿Si quisieras hacerlo sobre la zona 8x8 más clara/oscura?
 
+Para realizar esta tarea, es necesario obtener las dimensiones de la cámara web que se esté utilizando. Esto se logra con el método *get()* y las propiedades *CAP_PROP_FRAME_WIDTH* y *CAP_PROP_FRAME_HEIGHT* de la librería cv2. Una vez obtenidas las dimensiones, ya es posible recorrer la captura obtenida a través de la cámara web, en este caso se pide encontrar los píxeles en grupos de 8x8, por tanto, el rango de valores a recorrer en *i* (alto) y *j* (ancho) serán:
 
+```for i in range(0, h - 8, 8)```
+    ```for j in range(0, w - 8, 8)```
 
-### Tarea 6:
+Donde *h* se corresponde con el alto de la cámara y w con su ancho. Al apreciar la expresión, se puede ver como se va saltando de 8 en 8 elementos, lo cual explica la resta que se aplica a *h* y *w*, evitando así salirse de los límites de la imagen.
 
+Con esto aclarado solo queda mencionar, cómo se encontrarán los grupos de píxeles más claros y oscuros, para ello, se establecen las variables: *x_max*, *y_max*, *x_min* e *y_min*, todas inicializadas a 0, y las cuales representarán el grupo más claro de píxeles y el más oscuro respectivamente. A parte de estas, es necesario establecer también dos variables adicionales que representan el brillo mínimo teórico y el máximo teórico:
 
+```min_brightness = 0```
+```max_brightness = 255 * 3 * 64```
+
+El brillo mínimo que puede tener un grupo de 8x8 píxeles es teniendo todos sus canales al valor mínimo posible (negro), por tanto 0. En cuanto al brillo máximo, cada píxel dispone de 3 canales, BGR (usando cv2), el valor máximo posible que puede tener cada canal es 255. Por tanto, el brillo máximo de un único píxel vendrá dado por la multiplicación de 255 por tres, sin embargo, se está tratando con un grupo de 8x8 píxeles. Dicho de otro modo se trata con 64 píxeles, de ahí que se añada la multiplicación por 64 en la inicialización del brillo máximo teórico.
+
+Habiendo aclarado esto, en cada iteración del bucle anterior se deben obtener los grupos de 8x8 del fotograma actual, para posteriormente calcular el brillo máximo del grupo. En este caso, realizando la suma de los valores de cada canal, ya que, no se puede asumir el valor ideal de 255:
+
+```pixelGroup = frame[i:i+8, j:j+8]``` --> Selección del grupo de píxeles
+```pixel_colour_sum = np.sum(pixelGroup[:, :, 0]) + np.sum(pixelGroup[:, :, 1]) + np.sum(pixelGroup[:, :, 2])``` --> Cálculo del brillo máximo del grupo
+
+Una vez se ha obtenido el brillo máximo del grupo, se debe comparar con el brillo máximo y mínimo teóricos
+
+Caso 1:
+- pixel_colour_sum < max_brightness
+  - El brillo del grupo es menor al máximo teórico, por tanto, se establece este nuevo brillo como máximo teórico y se actualizan *x_min* e *y_min* con *i* y *j* que representan el grupo de píxeles 8x8
+
+Caso 2:
+- pixel_colour_sum > min_brightness
+  - El brillo del grupo es mayor al mínimo teórico, por tanto, se establece este nuevo brillo como mínimo teórico y se actualizan *x_max* e *y_max* con *i* y *j* que representan el grupo de píxeles 8x8
+
+Tras esto simplemente queda representar los círculos, para ello, se utiliza el comando *cv2.circle(img, center, radious, color, thickness)*. Este comando recibe como parámetros: una imagen, el punto que será el centro del círculo, el radio del círculo, un escalar que represenata el color en BGR y un entero que supone el grosor del círculo.
+
+```cv2.circle(frame, (x_max, y_max), 8, (0, 0, 255), 3)```
+```cv2.circle(frame, (x_min, y_min), 8, (255, 0, 0), 3)```
+
+Se pintan a partir del fotograma actual los círculos que comprenden a los grupos de 8x8 píxeles más claros/oscuros, siendo los claros representados por el color rojo y los más oscuros por el azul.
+
+### Tarea 6: Llevar a cabo una propuesta propia de pop art
+
+Se proporciona un código para la representación de un pop art, al igual que en la Tarea 4 se propone realizar un cambio en los valores predeterminados para crear una versión propia de pop art. En el código proporcionado por el profesor se divide la pantalla en cuatro porciones, la superior izquierda *(tl)*, la superior derecha *(tr)*, la inferior izquierda *(bl)* y la inferior derecha *(br)*.
+
+Los valores de los planos originales se extraen de cada fotograma:
+- r = frame[:, :, 2]
+- g = frame[:, :, 1]
+- b = frame[:, :, 0]
+
+Inicialización de la imagen y las variables anteriores (h y w representan el alto y ancho de la cámara):
+- collage = np.zeros((h*2,w*2,3), dtype = np.uint8)
+- tl = collage[0:h, 0:w]
+- tr = collage[0:h, w:w+w]
+- bl = collage[h:h+h, 0:w]
+- br = collage[h:h+h, w:w+w]
+
+Los valores predeterminados de cada variable son:
+tl
+- tl[:, :, 0] = b
+- tl[:, :, 1] = g
+- tl[:, :, 2] = r
+
+tr
+- tr[:, :, 0] = 255 - r
+- tr[:, :, 1] = g
+- tr[:, :, 2] = b
+
+bl
+- bl[:, :, 0] = r
+- bl[:, :, 1] = 255 - b
+- bl[:, :, 2] = g
+
+br
+- br[:, :, 0] = b
+- br[:, :, 1] = g
+- br[:, :, 2] = 255 - r
+
+Los valores que se decidió tocar son:
+tr
+- tr[:, :, 0] = 255 - r
+- tr[:, :, 1] = 255 - g
+- tr[:, :, 2] = 255 - b
+
+br
+- br[:, :, 0] = 255 - b
+- br[:, :, 1] = 255 - g
+- br[:, :, 2] = r
+
+Tras haber, modificado los valores, lo único que hace falta es mostrar el nuevo pop art
+
+```cv2.imshow('Cam', collage)```
+
+### Autores
+
+[@Mauro Gómez Guillén](https://github.com/MGGdesigns)
+[@Santiago Santana Martínez](https://github.com/Tiago1615)
+
+### Referencias Bibliográficas
+
+[Guión de la práctica](https://github.com/otsedom/otsedom.github.io/blob/main/VC/P1/README.md)
+[Idea para hallar los cuadrados del tablero de ajedrez](https://github.com/doocs/leetcode/blob/main/solution/1800-1899/1812.Determine%20Color%20of%20a%20Chessboard%20Square/README_EN.md)
+[Funciones de dibujo de primitivas OpenCV](https://docs.opencv.org/4.x/d6/d6e/group__imgproc__draw.html#ga07d2f74cadcf8e305e810ce8eed13bc9)
+[Obtener las dimensiones de la cámara web](https://stackoverflow.com/questions/39953263/get-video-dimension-in-python-opencv)
