@@ -39,17 +39,42 @@ Cambiar el valor de toda la imagen a 255 en el canal X, donde X está comprendid
 
 Una vez hecho esto, se emplean las funciones *cv2.rectangle(img, p1, p2, color, thickness)* y *cv2.line(img, p1, p2, color, thickness)*, que sirven para dibujar rectángulos y líneas como sus nombres indican. Estas funciones reciven como parámetros: una imagen, un punto inicial (x1, y1), un punto final (x2, y2), un escalr que representa el color RGB, y un entero que supone el grosor del borde de cada figura, a continuación se muestran ejemplos:
 
-```cv2.rectangle(color_img,(50,0),(90,50),(255,0,0),-1)
-   cv2.line(color_img,(50,0),(50,alto),(0,0,0),3)    
-```
+```cv2.rectangle(color_img,(50,0),(90,50),(255,0,0),-1)```
+```cv2.line(color_img,(50,0),(50,alto),(0,0,0),3)```
 
 Se pinta un rectágulo cuyo primer vértice se encuentra en (50, 0) y su último en (90, 50), se dibuja también una línea que va desde el punto (50, 0) al (50, 200). Recalcar que primero se deben pintar los rectángulos y finalmente las líneas, ya que, solo así se consigue que encajen bien.
 
-### Tarea 4:
+### Tarea 4: Modifica de forma libre los valores de un plano
 
+Se entrega un fragmento de código cuyo propósito principal es capturar la imagen de una cámara web, para luego mostrar los tres canales RGB concatenados uno al lado del otro. En esta tarea se pide cambiar los valores asignados a cualquiera de los tres canales RGB. Se ha decido invertir el canal rojo, para ello se raliza primero la extracción de canales de los fotogramas captados de la cámara
 
+```b = frame[:,:,0]```
+```g = frame[:,:,1]```
+```r = frame[:,:,2]```
 
-### Tarea 5:
+Destacar que como se utiliza la librería cv2, para trabajar con el vídeo captado de la cámara, los planos de colores quedan invertidos, ya que, esta librería los entiende así. Es decir, con cv2 RGB --> BGR.
+
+En cuanto al tema de invertir los colores, la operación a realizar se deduce de las imágenes en escala de grises. Si en una de estas imágenes, donde 255 representa el blanco y 0 el negro, se invirtiese el color. El valor 255 pasaría a representar el negro y el 0 al blanco. Por tanto, se puede deducir que si al valor máximo posible se le resta el valor que se quiere invertir se obtendrá el color inverso, abajo se relata un ejemplo
+
+Se quiere invertir el color X en dos casos:
+Caso 1:
+- X = 255
+  - X = 255 - 255 --> X = 0
+
+Caso 2
+- X = 0
+  - X = 255 - 0 --> X = 255
+
+Por tanto, para invertir el canal rojo, se emplea la expresión:
+
+```r = 255 - r```
+
+Ahora simplemente queda concatenar los canales, tal y como se hace en el código que se entrgó y mostrar el fotograma:
+
+```collage = np.hstack((r, g, b))```
+```cv2.imshow('RGB', cv2.resize(collage, (int(w*1.5),int(h/2)),cv2.INTER_NEAREST))```
+
+### Tarea 5: Pintar círculos en las posiciones del píxel más claro y más oscuro ¿Si quisieras hacerlo sobre la zona 8x8 más clara/oscura?
 
 
 
