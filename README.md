@@ -3,6 +3,17 @@
 ## Introducción
 Esta primera práctica tiene como objetivo, famialiarizarse con las herramientas de desarrollo [Anaconda](https://www.anaconda.com/), el manjedor de paquetes que se empleará para realizar las instalaciones de los paquetes necesarios durante el deasrrollo de las sesiones prácticas de la asignatura. Además de comprender y saber hacer operaciones básicas de tratamiento de imágenes, como acceder a los valores de un píxel en concreto, crear una imagen, dibujar primitivas gráficas sobre una imagen, abrir una imagen de disco, acceder a los fotogramas de un vídeo, entre otros. Para esto, se dispone de una serie de tareas, que se comentan más abajo.
 
+## Paquetes necesarios
+
+Esta práctica está centrada mayormente en el tratamiento de imágenes, por lo que se necesitan los paquetes:
+- opencv-python
+- matplotlib
+
+Para instalarlos, usar los comandos:
+
+```pip install opencv-python```
+```pip install matplotlib```
+
 ## Tareas
 
 ### Tarea 1: Crear una imagen 800x800 píxeles, con la textura de un tablero de ajedrez
@@ -15,7 +26,7 @@ En el caso que su resultado sea 0, estamos ante uno de los varios cuadrados del 
 
 ```chess_img[i*cuadrado:(i+1)*cuadrado, j*cuadrado:(j+1)*cuadrado]=255```
 
-Entiendo *i,j* como alto y ancho de la imagen, respectivamente. Con la operación anterior se van seleccionando las filas desde *i·100* hasta *(i+1)·100* y las columnas *j·100* hasta *(j+1)·100*. Por lo que efectivamente, se pintan cuadrados de 100x100 píxeles.
+Entendiendo *i,j* como alto y ancho de la imagen, respectivamente. Con la operación anterior se van seleccionando las filas desde *i·100* hasta *(i+1)·100* y las columnas *j·100* hasta *(j+1)·100*. Por lo que efectivamente, se pintan cuadrados de 100x100 píxeles.
 
 ### Tarea 2: Crear una imagen estilo Mondrian
 
@@ -37,7 +48,7 @@ Se elige la Tarea 2, como víctima para utilizar las funciones de dibujo de Open
 
 Cambiar el valor de toda la imagen a 255 en el canal X, donde X está comprendido entre 0 y 2.
 
-Una vez hecho esto, se emplean las funciones *cv2.rectangle(img, p1, p2, color, thickness)* y *cv2.line(img, p1, p2, color, thickness)*, que sirven para dibujar rectángulos y líneas como sus nombres indican. Estas funciones reciven como parámetros: una imagen, un punto inicial (x1, y1), un punto final (x2, y2), un escalar que representa el color BGR, y un entero que supone el grosor del borde de cada figura, a continuación se muestran ejemplos:
+Una vez hecho esto, se emplean las funciones *cv2.rectangle(img, p1, p2, color, thickness)* y *cv2.line(img, p1, p2, color, thickness)*, que sirven para dibujar rectángulos y líneas como sus nombres indican. Estas funciones reciven como parámetros: una imagen, un punto inicial (x1, y1), un punto final (x2, y2), un escalar que representa el color RGB, y un entero que supone el grosor del borde de cada figura, a continuación se muestran ejemplos:
 
 ```cv2.rectangle(color_img,(50,0),(90,50),(255,0,0),-1)```
 ```cv2.line(color_img,(50,0),(50,alto),(0,0,0),3)```
@@ -60,11 +71,11 @@ Se quiere invertir el color X en dos casos:
 
 Caso 1:
 - X = 255
-  - X = 255 - 255 --> X = 0
+  - X = 255 - X --> X = 0
 
 Caso 2
 - X = 0
-  - X = 255 - 0 --> X = 255
+  - X = 255 - X --> X = 255
 
 Por tanto, para invertir el canal rojo, se emplea la expresión:
 
@@ -84,7 +95,7 @@ Para realizar esta tarea, es necesario obtener las dimensiones de la cámara web
 
 Donde *h* se corresponde con el alto de la cámara y w con su ancho. Al apreciar la expresión, se puede ver como se va saltando de 8 en 8 elementos, lo cual explica la resta que se aplica a *h* y *w*, evitando así salirse de los límites de la imagen.
 
-Con esto aclarado solo queda mencionar, cómo se encontrarán los grupos de píxeles más claros y oscuros, para ello, se establecen las variables: *x_max*, *y_max*, *x_min* e *y_min*, todas inicializadas a 0, y las cuales representarán el grupo más claro de píxeles y el más oscuro respectivamente. A parte de estas, es necesario establecer también dos variables adicionales que representan el brillo mínimo teórico y el máximo teórico:
+Con esto aclarado solo queda mencionar, cómo se encontrarán los grupos de píxeles más claros y oscuros, para ello, se establecen las variables: *x_max*, *y_max*, *x_min* e *y_min*, todas inicializadas a 0, las cuales representarán el grupo más claro de píxeles y el más oscuro respectivamente. A parte de estas, es necesario establecer también dos variables adicionales que representan el brillo mínimo teórico y el máximo teórico:
 
 ```min_brightness = 0```
 ```max_brightness = 255 * 3 * 64```
@@ -111,16 +122,11 @@ Tras esto simplemente queda representar los círculos, para ello, se utiliza el 
 ```cv2.circle(frame, (x_max, y_max), 8, (0, 0, 255), 3)```
 ```cv2.circle(frame, (x_min, y_min), 8, (255, 0, 0), 3)```
 
-Se pintan a partir del fotograma actual los círculos que comprenden a los grupos de 8x8 píxeles más claros/oscuros, siendo los claros representados por el color rojo y los más oscuros por el azul.
+Se pintan, a partir del fotograma actual, los círculos que comprenden a los grupos de 8x8 píxeles más claros/oscuros, siendo los claros representados por el color rojo y los más oscuros por el azul.
 
 ### Tarea 6: Llevar a cabo una propuesta propia de pop art
 
 Se proporciona un código para la representación de un pop art, al igual que en la Tarea 4 se propone realizar un cambio en los valores predeterminados para crear una versión propia de pop art. En el código proporcionado por el profesor se divide la pantalla en cuatro porciones, la superior izquierda *(tl)*, la superior derecha *(tr)*, la inferior izquierda *(bl)* y la inferior derecha *(br)*.
-
-Los valores de los planos originales se extraen de cada fotograma:
-- r = frame[:, :, 2]
-- g = frame[:, :, 1]
-- b = frame[:, :, 0]
 
 Inicialización de la imagen y las variables anteriores (h y w representan el alto y ancho de la cámara):
 - collage = np.zeros((h*2,w*2,3), dtype = np.uint8)
@@ -129,21 +135,30 @@ Inicialización de la imagen y las variables anteriores (h y w representan el al
 - bl = collage[h:h+h, 0:w]
 - br = collage[h:h+h, w:w+w]
 
+Los valores de los planos originales se extraen de cada fotograma:
+- r = frame[:, :, 2]
+- g = frame[:, :, 1]
+- b = frame[:, :, 0]
+
 Los valores predeterminados de cada variable son:
+
 tl
 - tl[:, :, 0] = b
 - tl[:, :, 1] = g
 - tl[:, :, 2] = r
+
 
 tr
 - tr[:, :, 0] = 255 - r
 - tr[:, :, 1] = g
 - tr[:, :, 2] = b
 
+
 bl
 - bl[:, :, 0] = r
 - bl[:, :, 1] = 255 - b
 - bl[:, :, 2] = g
+
 
 br
 - br[:, :, 0] = b
@@ -151,28 +166,30 @@ br
 - br[:, :, 2] = 255 - r
 
 Los valores que se decidió tocar son:
+
 tr
 - tr[:, :, 0] = 255 - r
 - tr[:, :, 1] = 255 - g
 - tr[:, :, 2] = 255 - b
+
 
 br
 - br[:, :, 0] = 255 - b
 - br[:, :, 1] = 255 - g
 - br[:, :, 2] = r
 
-Tras haber, modificado los valores, lo único que hace falta es mostrar el nuevo pop art
+Tras haber, modificado los valores, lo único que hace falta es mostrar el nuevo pop art.
 
 ```cv2.imshow('Cam', collage)```
 
 ### Autores
 
-[@Mauro Gómez Guillén](https://github.com/MGGdesigns)
-[@Santiago Santana Martínez](https://github.com/Tiago1615)
+- [@Mauro Gómez Guillén](https://github.com/MGGdesigns)
+- [@Santiago Santana Martínez](https://github.com/Tiago1615)
 
 ### Referencias Bibliográficas
 
-[Guión de la práctica](https://github.com/otsedom/otsedom.github.io/blob/main/VC/P1/README.md)
-[Idea para hallar los cuadrados del tablero de ajedrez](https://github.com/doocs/leetcode/blob/main/solution/1800-1899/1812.Determine%20Color%20of%20a%20Chessboard%20Square/README_EN.md)
-[Funciones de dibujo de primitivas OpenCV](https://docs.opencv.org/4.x/d6/d6e/group__imgproc__draw.html#ga07d2f74cadcf8e305e810ce8eed13bc9)
-[Obtener las dimensiones de la cámara web](https://stackoverflow.com/questions/39953263/get-video-dimension-in-python-opencv)
+- [Guión de la práctica](https://github.com/otsedom/otsedom.github.io/blob/main/VC/P1/README.md)
+- [Idea para hallar los cuadrados del tablero de ajedrez](https://github.com/doocs/leetcode/blob/main/solution/1800-1899/1812.Determine%20Color%20of%20a%20Chessboard%20Square/README_EN.md)
+- [Funciones de dibujo de primitivas OpenCV](https://docs.opencv.org/4.x/d6/d6e/group__imgproc__draw.html#ga07d2f74cadcf8e305e810ce8eed13bc9)
+- [Obtener las dimensiones de la cámara web](https://stackoverflow.com/questions/39953263/get-video-dimension-in-python-opencv)
