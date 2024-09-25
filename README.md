@@ -28,6 +28,9 @@ En el caso que su resultado sea 0, estamos ante uno de los varios cuadrados del 
 
 Entendiendo *i,j* como alto y ancho de la imagen, respectivamente. Con la operación anterior se van seleccionando las filas desde *i·100* hasta *(i+1)·100* y las columnas *j·100* hasta *(j+1)·100*. Por lo que efectivamente, se pintan cuadrados de 100x100 píxeles.
 
+![image](https://github.com/user-attachments/assets/411d782b-788b-49bc-aa16-0cf2466c1fe8)
+
+
 ### Tarea 2: Crear una imagen estilo Mondrian
 
 En este caso se propone crear una imagen tipo [obra](https://historia-arte.com/obras/mondrian-composicion-en-rojo-amarillo-y-azul) de Piet Mondrian. Para ello, se crea primero una imagen a color de 200x300 píxeles inicializada a negro, donde posteriormente se seleccionarán las filas y columnas a rellenar para intentar la réplica de Mondrian.
@@ -39,6 +42,8 @@ Nótese, que la imagen se crea con tres canales (RGB) en lugar de uno, lo que in
 ```color_img[0:125, 0:150, 0]=255```
 
 Aclarar que se selecciona desde la fila 0 hasta la 124 y las columnas desde la 0 a la 149, para pintarlas a rojo. Esto se puede deducir por el tercer índice, el cual corresponde al canal rojo de la imagen.
+
+![image](https://github.com/user-attachments/assets/15f5c2e3-e5c8-496d-bc29-4b431ca962ad)
 
 ### Tarea 3: Resolver una de las tareas anteriores con las funciones de dibujo de OpenCV
 
@@ -54,6 +59,8 @@ Una vez hecho esto, se emplean las funciones *cv2.rectangle(img, p1, p2, color, 
 ```cv2.line(color_img,(50,0),(50,alto),(0,0,0),3)```
 
 Se pinta un rectágulo cuyo primer vértice se encuentra en (50, 0) y su último en (90, 50), se dibuja también una línea que va desde el punto (50, 0) al (50, 200). Recalcar que primero se deben pintar los rectángulos y finalmente las líneas, ya que, solo así se consigue que encajen bien.
+
+![image](https://github.com/user-attachments/assets/ea6d837c-81ff-424f-bd92-12b7c412803c)
 
 ### Tarea 4: Modifica de forma libre los valores de un plano
 
@@ -85,6 +92,8 @@ Ahora simplemente queda concatenar los canales, tal y como se hace en el código
 
 ```collage = np.hstack((r, g, b))```
 ```cv2.imshow('RGB', cv2.resize(collage, (int(w*1.5),int(h/2)),cv2.INTER_NEAREST))```
+
+![image](https://github.com/user-attachments/assets/ca29c279-b586-44b2-8d13-2145cc499658)
 
 ### Tarea 5: Pintar círculos en las posiciones del píxel más claro y más oscuro ¿Si quisieras hacerlo sobre la zona 8x8 más clara/oscura?
 
@@ -123,6 +132,8 @@ Tras esto simplemente queda representar los círculos, para ello, se utiliza el 
 ```cv2.circle(frame, (x_min, y_min), 8, (255, 0, 0), 3)```
 
 Se pintan, a partir del fotograma actual, los círculos que comprenden a los grupos de 8x8 píxeles más claros/oscuros, siendo los claros representados por el color rojo y los más oscuros por el azul.
+
+![image](https://github.com/user-attachments/assets/02ab3af3-79c5-46cf-9aef-ac0824b34073)
 
 ### Tarea 6: Llevar a cabo una propuesta propia de pop art
 
@@ -181,6 +192,8 @@ br
 Tras haber, modificado los valores, lo único que hace falta es mostrar el nuevo pop art.
 
 ```cv2.imshow('Cam', collage)```
+
+![image](https://github.com/user-attachments/assets/9fae5d84-aa9e-4f41-a78a-d635374e7eb6)
 
 ### Autores
 
